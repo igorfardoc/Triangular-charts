@@ -6,9 +6,8 @@ import pygame
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon, QPixmap
 import win32clipboard
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 import math
-
 
 pygame.init()
 
@@ -26,6 +25,7 @@ def get_angle(k):
 class EditData(QWidget):
     def __init__(self):
         super().__init__()
+        self.file = ''
         self.size_pygame = 600
         self.painter = PyGame()
         self.table = [['', '', '', '', '', 0, False]]
@@ -37,23 +37,23 @@ class EditData(QWidget):
         self.procents_size = 10
         self.picture_size = 200
         self.table1 = []
-        self.metkas = [('Красный квадрат', 'red_square.jpg'), ('Чёрный ромб', 'black_romb.jpg'), ('Синий треугольник', 'blue_triangle.jpg'),
+        self.metkas = [('Красный квадрат', 'red_square.jpg'), ('Чёрный ромб', 'black_romb.jpg'),
+                       ('Синий треугольник', 'blue_triangle.jpg'),
                        ('Красный круг', 'red_circle.jpg'), ('Чёрный треугольник', 'black_triangle.jpg')]
         self.edit = True
         self.initUI()
-        
+
     def initUI(self):
         uic.loadUi('Main.ui', self)
-        
         self.screen = pygame.display.set_mode((self.size_pygame, self.size_pygame))
-        self.draw_py_game()        
-        
+        self.draw_py_game()
+
         self.pasteButton.clicked.connect(self.paste)
         self.tablew.setColumnCount(7)
         self.tablew.setHorizontalHeaderLabels(['№ образца', 'A', 'B', 'C', 'Имя группы', 'Маркер', 'Отображать'])
         self.tablew.setRowCount(1)
         self.tablew.cellChanged.connect(self.change_data_table)
-        
+
         self.axe1.textChanged.connect(self.change_params)
         self.axe2.textChanged.connect(self.change_params)
         self.axe3.textChanged.connect(self.change_params)
@@ -63,13 +63,90 @@ class EditData(QWidget):
         self.axe_size.valueChanged.connect(self.change_params)
         self.procent_size.valueChanged.connect(self.change_params)
         self.spin_size.valueChanged.connect(self.change_params)
+        self.open_file.clicked.connect(self.open_file_d)
+        self.save_as_file.clicked.connect(self.save_as)
+        self.save_file.clicked.connect(self.save_file1)
 
         self.save_picture.clicked.connect(self.save)
-        
+
         self.tablew1.setColumnCount(3)
         self.tablew1.setHorizontalHeaderLabels(['Имя группы', 'Маркер', 'Отображать'])
         self.tablew1.setRowCount(0)
         self.print_table()
+
+    def convert(self, str1):
+        return str1 == '1'
+
+    def open_file_d(self):
+        fileName, _ = QFileDialog.getOpenFileName(self, "Выберете файл", "",
+                            "Charts Files (*.cf)")
+        if fileName:
+            self.file = fileName
+            mass = open(fileName).read().split('\n')
+            self.net_visible = self.convert(mass[0])
+            self.net.setChecked(self.net_visible)
+            self.procents_visible = self.convert(mass[1])
+            self.procents.setChecked(self.procents_visible)
+            self.axes = mass[2:5]
+            self.axe1.setText(mass[2])
+            self.axe2.setText(mass[3])
+            self.axe3.setText(mass[4])
+            self.icon_size = int(mass[5])
+            self.marker_size.setValue(self.icon_size)
+            self.axes_size = int(mass[6])
+            self.axe_size.setValue(self.axes_size)
+            self.procents_size = int(mass[7])
+            self.procent_size.setValue(self.procents_size)
+            self.picture_size = int(mass[8])
+            self.spin_size.setValue(self.picture_size)
+            self.table = []
+            for i in range(9, len(mass)):
+                mass1 = mass[i].split('~')
+                self.table.append(mass1[:5] + [int(mass1[5]), self.convert(mass1[6])])
+            self.table1 = []
+            self.update_table1()
+            self.draw_table1()
+            self.print_table()
+            self.draw_py_game()
+
+    def convert1(self, str1):
+        if str1:
+            return '1'
+        return '0'
+
+    def save_as(self):
+        name, _ = QFileDialog.getSaveFileName(self, 'Сохраните файл', directory='Chart.cf', filter="Charts Files (*.cf)")
+        if name:
+            self.file = name
+            mass = []
+            mass.append(self.convert1(self.net_visible))
+            mass.append(self.convert1(self.procents_visible))
+            mass += self.axes
+            mass.append(str(self.icon_size))
+            mass.append(str(self.axes_size))
+            mass.append(str(self.procents_size))
+            mass.append(str(self.picture_size))
+            for i in range(len(self.table)):
+                a = self.table[i][:5] + [str(self.table[i][5]), self.convert1(self.table[i][6])]
+                mass.append('~'.join(a))
+            open(name, 'w').write('\n'.join(mass))
+
+    def save_file1(self):
+        if not self.file:
+            self.save_as()
+            return
+        name = self.file
+        mass = []
+        mass.append(self.convert1(self.net_visible))
+        mass.append(self.convert1(self.procents_visible))
+        mass += self.axes
+        mass.append(str(self.icon_size))
+        mass.append(str(self.axes_size))
+        mass.append(str(self.procents_size))
+        mass.append(str(self.picture_size))
+        for i in range(len(self.table)):
+            mass.append('~'.join(self.table[i][:5] + [str(self.table[i][5]), self.convert1(self.table[i][6])]))
+        open(name, 'w').write('\n'.join(mass))
 
     def save(self):
         name = QFileDialog.getSaveFileName(self, 'Сохранение', filter='.png file (*.png)',
@@ -93,7 +170,7 @@ class EditData(QWidget):
                  'procent_size': int(self.procents_size * koef)}
             surface = self.painter.get_surface(d, self.picture_size)
             pygame.image.save(surface, name[0])
-    
+
     def change_params(self, val):
         self.axes[0] = self.axe1.text()
         self.axes[1] = self.axe2.text()
@@ -126,12 +203,12 @@ class EditData(QWidget):
             mass.append(now + [''] * (5 - len(now)) + [0, False])
         self.table = self.table[:r] + mass + self.table[r:]
         self.update_table1()
-        self.draw_table1()        
+        self.draw_table1()
         self.print_table()
-        
+
     def nothing(self):
         pass
-    
+
     def change_data_table(self, r, c):
         if not self.edit:
             return
@@ -142,7 +219,7 @@ class EditData(QWidget):
         self.draw_table1()
         self.print_table()
         self.draw_py_game()
-    
+
     def update_table1(self):
         newtable1 = []
         have = set()
@@ -159,7 +236,7 @@ class EditData(QWidget):
                 newtable1.append([i[4], 0, False])
             have.add(i[4])
         self.table1 = newtable1
-        
+
     def draw_table1(self):
         self.tablew1.setColumnCount(3)
         self.tablew1.setHorizontalHeaderLabels(['Имя группы', 'Маркер', 'Отображать'])
@@ -168,19 +245,19 @@ class EditData(QWidget):
             a = QTableWidgetItem(self.table1[i][0])
             a.setFlags(a.flags() ^ Qt.ItemIsEditable)
             self.tablew1.setItem(i, 0, a)
-            
+
             self.tablew1.setCellWidget(i, 1, QComboBox())
             for k, l in self.metkas[::-1]:
                 self.tablew1.cellWidget(i, 1).insertItem(0, k)
                 self.tablew1.cellWidget(i, 1).setItemIcon(0, QIcon(QPixmap(l)))
             self.tablew1.cellWidget(i, 1).setCurrentIndex(self.table1[i][1])
             self.tablew1.cellWidget(i, 1).currentIndexChanged.connect(self.table1_combo_change)
-                
+
             d = QCheckBox()
             d.setChecked(self.table1[i][2])
             d.stateChanged.connect(self.table1_checkbox_change)
             self.tablew1.setCellWidget(i, 2, d)
-    
+
     def table1_combo_change(self, state):
         name = ''
         for i in range(len(self.table1)):
@@ -214,14 +291,14 @@ class EditData(QWidget):
                         self.table[i][6] = False
         self.print_table()
         self.draw_py_game()
-    
+
     def combo_change(self, state):
         for i in range(len(self.table)):
             if self.tablew.cellWidget(i, 5) == self.sender():
                 self.table[i][5] = state
-                break        
+                break
         self.draw_py_game()
-    
+
     def checkbox_change(self, state):
         for i in range(len(self.table)):
             if self.tablew.cellWidget(i, 6) == self.sender():
@@ -231,7 +308,7 @@ class EditData(QWidget):
                     self.table[i][6] = False
                 break
         self.draw_py_game()
-    
+
     def print_table(self):
         self.edit = False
         self.tablew.setRowCount(len(self.table))
@@ -246,14 +323,13 @@ class EditData(QWidget):
                 self.tablew.cellWidget(i, 5).setItemIcon(0, QIcon(QPixmap(l)))
             self.tablew.cellWidget(i, 5).setCurrentIndex(self.table[i][5])
             self.tablew.cellWidget(i, 5).currentIndexChanged.connect(self.combo_change)
-                
+
             d = QCheckBox()
             d.setChecked(self.table[i][6])
             d.stateChanged.connect(self.checkbox_change)
             self.tablew.setCellWidget(i, 6, d)
         self.edit = True
-                
-    
+
     def draw_py_game(self):
         points = []
         for i in range(len(self.table)):
@@ -267,17 +343,26 @@ class EditData(QWidget):
                         continue
                 now.append(self.metkas[self.table[i][5]][0])
                 points.append(now)
-        d = {'points' : points, 'sizei': self.icon_size, 'net': self.net_visible,
-             'sides': self.axes, 'side_size': self.axes_size, 'procents': self.procents_visible, 'procent_size': self.procents_size}
-        self.screen.blit(self.painter.get_surface(d, self.size_pygame), (0, 0))
+        d1 = {'points': points, 'sizei': self.icon_size, 'net': self.net_visible,
+             'sides': self.axes, 'side_size': self.axes_size, 'procents': self.procents_visible,
+             'procent_size': self.procents_size}
+        global d, size
+        d = d1
+        size = self.size_pygame
+        self.screen.blit(self.painter.get_surface(), (0, 0))
         pygame.display.flip()
+
+
+d = {}
+size = 0
 
 
 class PyGame:
     def __init__(self):
         pass
-    
-    def get_surface(self, d, size):
+
+    def get_surface(self):
+        global d, size
         sc = pygame.Surface((size, size))
         a = size / 4 * 3
         med = (a * a - a * a / 4) ** 0.5
@@ -288,7 +373,7 @@ class PyGame:
         t1 = f.render(d['sides'][0], 1, (0, 0, 0))
         x = size / 2 - t1.get_width() / 2
         y = size / 2 + med / 3 + t1.get_height() / 3
-        sc.blit(t1, (x, y))
+        sc.blit(t1, (round(x), round(y)))
         #
         t2 = f.render(d['sides'][1], 1, (0, 0, 0))
         sur1 = pygame.Surface((t2.get_width(), t2.get_height()))
@@ -304,7 +389,7 @@ class PyGame:
         x, y = x + vec[0] * 0.8333 * h, y + vec[1] * 0.8333 * h
         x -= (h * (3 ** 0.5 / 2) + 1 / 2 * w) / 2
         y -= (w * (3 ** 0.5 / 2) + 1 / 2 * h) / 2
-        sc.blit(sur1, (x, y))
+        sc.blit(sur1, (round(x), round(y)))
         #
         t3 = f.render(d['sides'][2], 1, (0, 0, 0))
         sur2 = pygame.Surface((t3.get_width(), t3.get_height()))
@@ -320,7 +405,7 @@ class PyGame:
         x, y = x + vec[0] * 0.8333 * h, y + vec[1] * 0.8333 * h
         x -= (h * (3 ** 0.5 / 2) + 1 / 2 * w) / 2
         y -= (w * (3 ** 0.5 / 2) + 1 / 2 * h) / 2
-        sc.blit(sur2, (x, y))
+        sc.blit(sur2, (round(x), round(y)))
         ############################
         if d['procents']:
             f = pygame.font.SysFont('arial', d['procent_size'])
@@ -347,7 +432,7 @@ class PyGame:
                 y += vec[1] * (h / 2 + h / 10)
                 s = pygame.transform.rotate(s, 60)
                 x -= (1 / 2 * w + (3 ** 0.5 / 2) * h) / 2
-                y -= (1 / 2 * h + (3 ** 0.5 / 2) * w) / 2 
+                y -= (1 / 2 * h + (3 ** 0.5 / 2) * w) / 2
                 sc.blit(s, (x, y))
             for i in range(11):
                 t = f.render(str((10 - i) * 10), 1, (0, 0, 0))
@@ -365,12 +450,12 @@ class PyGame:
                 y += vec[1] * (h / 2 + h / 10)
                 s = pygame.transform.rotate(s, 300)
                 x -= (1 / 2 * w + (3 ** 0.5 / 2) * h) / 2
-                y -= (1 / 2 * h + (3 ** 0.5 / 2) * w) / 2 
+                y -= (1 / 2 * h + (3 ** 0.5 / 2) * w) / 2
                 sc.blit(s, (x, y))
         ################################
-        pointa = (size / 2 - a / 2, size / 2 + med / 3)
-        pointb = (size / 2, size / 2 - med / 3 * 2)
-        pointc = (size / 2 + a / 2, size / 2 + med / 3)
+        pointa = (round(size / 2 - a / 2), round(size / 2 + med / 3))
+        pointb = (round(size / 2), round(size / 2 - med / 3 * 2))
+        pointc = (round(size / 2 + a / 2), round(size / 2 + med / 3))
         pygame.draw.line(sc, (0, 0, 0), pointa, pointb)
         pygame.draw.line(sc, (0, 0, 0), pointa, pointc)
         pygame.draw.line(sc, (0, 0, 0), pointc, pointb)
@@ -378,11 +463,15 @@ class PyGame:
             net_col = (200, 200, 200)
             for i in range(9):
                 pygame.draw.line(sc, net_col, (size / 2 - a / 2 + (1 + i) * a / 10, size / 2 + med / 3),
-                                 (size / 2 + a / 2 - 1 / 2 * (9 - i) * a / 10, size / 2 + med / 3 - (9 - i) / 10 * a * (3 ** 0.5 / 2)))
+                                 (size / 2 + a / 2 - 1 / 2 * (9 - i) * a / 10,
+                                  size / 2 + med / 3 - (9 - i) / 10 * a * (3 ** 0.5 / 2)))
                 pygame.draw.line(sc, net_col, (size / 2 - a / 2 + (1 + i) * a / 10, size / 2 + med / 3),
-                                 (size / 2 - a / 2 + 1 / 2 * (1 + i) * a / 10, size / 2 + med / 3 - (i + 1) / 10 * a * (3 ** 0.5 / 2)))
-                pygame.draw.line(sc, net_col, (size / 2 - 1 / 2 * a * (i + 1) / 10, size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10),
-                                 (size / 2 + 1 / 2 * a * (i + 1) / 10, size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10))           
+                                 (size / 2 - a / 2 + 1 / 2 * (1 + i) * a / 10,
+                                  size / 2 + med / 3 - (i + 1) / 10 * a * (3 ** 0.5 / 2)))
+                pygame.draw.line(sc, net_col, (
+                size / 2 - 1 / 2 * a * (i + 1) / 10, size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10),
+                                 (size / 2 + 1 / 2 * a * (i + 1) / 10,
+                                  size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10))
         mass = d['points']
         sizei = d['sizei']
         for i in mass:
@@ -438,8 +527,8 @@ class PyGame:
                 pygame.draw.polygon(icon, col, [(0, sizei), (sizei, sizei), (sizei / 2, 0)])
             sc.blit(icon, (x - sizei / 2, y - sizei / 2))
         return sc
-            
-               
+
+
 app = QApplication([])
 ex = EditData()
 ex.show()

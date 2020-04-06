@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>20</y>
-     <width>831</width>
+     <width>971</width>
      <height>411</height>
     </rect>
    </property>
@@ -368,6 +368,60 @@
    </property>
    <property name="text">
     <string>Сохранить картинку</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="open_file">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>800</y>
+     <width>171</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Открыть</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="save_file">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>850</y>
+     <width>261</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Сохранить</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="save_as_file">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>850</y>
+     <width>261</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Сохранить как</string>
    </property>
   </widget>
  </widget>
