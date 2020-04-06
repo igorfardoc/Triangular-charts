@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QTableWidgetItem, QComboBox, QCheckBox
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QTableWidget
 import sys
 import pygame
 from PyQt5 import uic
@@ -257,6 +257,8 @@ class EditData(QWidget):
             d.setChecked(self.table1[i][2])
             d.stateChanged.connect(self.table1_checkbox_change)
             self.tablew1.setCellWidget(i, 2, d)
+        self.tablew1.resizeColumnsToContents()
+        self.tablew.setColumnWidth(1, 200)
 
     def table1_combo_change(self, state):
         name = ''
@@ -328,6 +330,8 @@ class EditData(QWidget):
             d.setChecked(self.table[i][6])
             d.stateChanged.connect(self.checkbox_change)
             self.tablew.setCellWidget(i, 6, d)
+        self.tablew.resizeColumnsToContents()
+        self.tablew.setColumnWidth(5, 200)
         self.edit = True
 
     def draw_py_game(self):
@@ -338,7 +342,7 @@ class EditData(QWidget):
                 now.append(['', '', ''])
                 for j in range(3):
                     try:
-                        now[0][j] = int(self.table[i][1 + j])
+                        now[0][j] = float(self.table[i][1 + j])
                     except:
                         continue
                 now.append(self.metkas[self.table[i][5]][0])
