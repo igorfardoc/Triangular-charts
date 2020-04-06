@@ -165,10 +165,13 @@ class EditData(QWidget):
                             continue
                     now.append(self.metkas[self.table[i][5]][0])
                     points.append(now)
-            d = {'points': points, 'sizei': int(self.icon_size * koef), 'net': self.net_visible,
+            d1 = {'points': points, 'sizei': int(self.icon_size * koef), 'net': self.net_visible,
                  'sides': self.axes, 'side_size': int(self.axes_size * koef), 'procents': self.procents_visible,
                  'procent_size': int(self.procents_size * koef)}
-            surface = self.painter.get_surface(d, self.picture_size)
+            global d, size
+            d = d1
+            size = self.picture_size
+            surface = self.painter.get_surface()
             pygame.image.save(surface, name[0])
 
     def change_params(self, val):
