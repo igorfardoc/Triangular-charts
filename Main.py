@@ -495,19 +495,20 @@ class PyGame:
                 b1 = 0.001
             if a1 == 0:
                 a1 = 0.001
-            if c1 == 0:
-                c1 = 0.001
-            k1 = c1 / b1
-            k2 = c1 / a1
-            ang1 = get_angle(k1)
-            ang2 = get_angle(k2)
-            t2 = math.tan(ang1 / 180 * math.pi)
-            t1 = math.tan(ang2 / 180 * math.pi)
-            # t1*x=(a - x) * t2
-            x = (a * t2) / (t1 + t2)
-            y = t1 * x
-            x += size / 2 - a / 2
-            y = size / 2 + med / 3 - y
+            y = size / 2 + med / 3
+            x = size / 2 - a / 2 + a / 100 * a1
+            if c1 != 0:
+                k1 = c1 / b1
+                k2 = c1 / a1
+                ang1 = get_angle(k1)
+                ang2 = get_angle(k2)
+                t2 = math.tan(ang1 / 180 * math.pi)
+                t1 = math.tan(ang2 / 180 * math.pi)
+                # t1*x=(a - x) * t2
+                x = (a * t2) / (t1 + t2)
+                y = t1 * x
+                x += size / 2 - a / 2
+                y = size / 2 + med / 3 - y
             #
             icon = pygame.Surface((sizei, sizei))
             icon.fill((255, 255, 255))
