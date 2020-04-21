@@ -18,8 +18,10 @@ def get_angle(k):
         now = math.sin(i / 180 * math.pi) / math.sin((60 - i) / 180 * math.pi)
         if now >= k:
             return i
-        i += 0.1
-    raise ValueError
+        i += 0.01
+    if k >= 10000:
+        return 60
+    return 0
 
 
 class EditData(QWidget):
@@ -28,7 +30,9 @@ class EditData(QWidget):
         self.file = ''
         self.size_pygame = 600
         self.painter = PyGame()
-        self.table = [['', '', '', '', '', 0, False]]
+        self.table = []
+        for i in range(5000):
+            self.table.append(['', '', '', '', '', 0, True])
         self.axes = ['', '', '']
         self.net_visible = False
         self.procents_visible = False
@@ -72,7 +76,7 @@ class EditData(QWidget):
         self.tablew1.setColumnCount(3)
         self.tablew1.setHorizontalHeaderLabels(['Имя группы', 'Маркер', 'Отображать'])
         self.tablew1.setRowCount(0)
-        self.print_table()
+        self.print_table(start=True)
 
     def convert(self, str1):
         return str1 == '1'
@@ -193,18 +197,18 @@ class EditData(QWidget):
         data = data.split('\r\n')
         r = self.tablew.currentRow()
         c = self.tablew.currentColumn()
-        mass = []
         for i in range(len(data)):
-            now = [''] * c
             if data[i] == '':
                 continue
+            if i + r >= len(self.table) - 1:
+                self.table.append(['', '', '', '', '', 0, True])
             data[i] = data[i].split('\t')
             for j in range(len(data[i])):
-                now.append(data[i][j])
-            if len(now) > 5:
-                return
-            mass.append(now + [''] * (5 - len(now)) + [0, False])
-        self.table = self.table[:r] + mass + self.table[r:]
+                if j + c >= 5:
+                    continue
+                self.table[i + r][j + c] = data[i][j]
+        if self.table[len(self.table) - 1][:5] != ['', '', '', '', '']:
+            self.table.append(['', '', '', '', '', 0, True])
         self.update_table1()
         self.draw_table1()
         self.print_table()
@@ -217,10 +221,12 @@ class EditData(QWidget):
             return
         self.table[r][c] = self.tablew.item(r, c).text()
         if self.table[len(self.table) - 1][:5] != ['', '', '', '', '']:
-            self.table.append(['', '', '', '', '', 0, False])
+            self.table.append(['', '', '', '', '', 0, True])
+            self.print_table()
         self.update_table1()
         self.draw_table1()
-        self.print_table()
+        #self.print_table()
+        self.tablew.resizeColumnsToContents()
         self.draw_py_game()
 
     def update_table1(self):
@@ -314,25 +320,25 @@ class EditData(QWidget):
                 break
         self.draw_py_game()
 
-    def print_table(self):
+    def print_table(self, start=False):
         self.edit = False
+        bef = self.tablew.rowCount()
         self.tablew.setRowCount(len(self.table))
-        if len(self.table) > 1:
-            1 == 1
         for i in range(len(self.table)):
             for j in range(5):
                 self.tablew.setItem(i, j, QTableWidgetItem(self.table[i][j]))
-            self.tablew.setCellWidget(i, 5, QComboBox())
-            for k, l in self.metkas[::-1]:
-                self.tablew.cellWidget(i, 5).insertItem(0, k)
-                self.tablew.cellWidget(i, 5).setItemIcon(0, QIcon(QPixmap(l)))
+            if bef <= i or start:
+                self.tablew.setCellWidget(i, 5, QComboBox())
+                for k, l in self.metkas[::-1]:
+                    self.tablew.cellWidget(i, 5).insertItem(0, k)
+                    self.tablew.cellWidget(i, 5).setItemIcon(0, QIcon(QPixmap(l)))
             self.tablew.cellWidget(i, 5).setCurrentIndex(self.table[i][5])
-            self.tablew.cellWidget(i, 5).currentIndexChanged.connect(self.combo_change)
-
-            d = QCheckBox()
-            d.setChecked(self.table[i][6])
-            d.stateChanged.connect(self.checkbox_change)
-            self.tablew.setCellWidget(i, 6, d)
+            if bef <= i or start:
+                self.tablew.cellWidget(i, 5).currentIndexChanged.connect(self.combo_change)
+                self.tablew.setCellWidget(i, 6, QCheckBox())
+            self.tablew.cellWidget(i, 6).setChecked(self.table[i][6])
+            if bef <= i or start:
+                self.tablew.cellWidget(i, 6).stateChanged.connect(self.checkbox_change)
         self.tablew.resizeColumnsToContents()
         self.tablew.setColumnWidth(5, 200)
         self.edit = True
@@ -378,53 +384,31 @@ class PyGame:
         fs = d['side_size']
         f = pygame.font.SysFont('arial', fs)
         t1 = f.render(d['sides'][0], 1, (0, 0, 0))
-        x = size / 2 - t1.get_width() / 2
+        x = min(size / 2 + a / 2 - t1.get_width() / 2, size - t1.get_width() - 10)
         y = size / 2 + med / 3 + t1.get_height() / 3
         sc.blit(t1, (round(x), round(y)))
         #
         t2 = f.render(d['sides'][1], 1, (0, 0, 0))
-        sur1 = pygame.Surface((t2.get_width(), t2.get_height()))
-        sur1.fill((255, 255, 255))
-        sur1.blit(t2, (0, 0))
-        sur1 = pygame.transform.rotate(sur1, 60)
-        w = t2.get_width()
-        h = t2.get_height()
-        x, y = size / 2 - a / 4, size / 2 + med / 3 - a / 2 * (3 ** 0.5 / 2)
-        vec = [-3 ** 0.5, -1]
-        l = (vec[0] * vec[0] + vec[1] * vec[1]) ** 0.5
-        vec[0], vec[1] = vec[0] / l, vec[1] / l
-        x, y = x + vec[0] * 0.8333 * h, y + vec[1] * 0.8333 * h
-        x -= (h * (3 ** 0.5 / 2) + 1 / 2 * w) / 2
-        y -= (w * (3 ** 0.5 / 2) + 1 / 2 * h) / 2
-        sc.blit(sur1, (round(x), round(y)))
+        x = max(size / 2 - a / 2 - t2.get_width() / 2, 10)
+        y = size / 2 + med / 3 + t2.get_height() / 3
+        sc.blit(t2, (round(x), round(y)))
         #
         t3 = f.render(d['sides'][2], 1, (0, 0, 0))
-        sur2 = pygame.Surface((t3.get_width(), t3.get_height()))
-        sur2.fill((255, 255, 255))
-        sur2.blit(t3, (0, 0))
-        sur2 = pygame.transform.rotate(sur2, 300)
-        w = t3.get_width()
-        h = t3.get_height()
-        x, y = size / 2 + a / 4, size / 2 + med / 3 - a / 2 * (3 ** 0.5 / 2)
-        vec = [3 ** 0.5, -1]
-        l = (vec[0] * vec[0] + vec[1] * vec[1]) ** 0.5
-        vec[0], vec[1] = vec[0] / l, vec[1] / l
-        x, y = x + vec[0] * 0.8333 * h, y + vec[1] * 0.8333 * h
-        x -= (h * (3 ** 0.5 / 2) + 1 / 2 * w) / 2
-        y -= (w * (3 ** 0.5 / 2) + 1 / 2 * h) / 2
-        sc.blit(sur2, (round(x), round(y)))
+        x = size / 2 + 20
+        y = size / 2 - med / 3 * 2 - t3.get_height() / 2
+        sc.blit(t3, (round(x), round(y)))
         ############################
         if d['procents']:
             f = pygame.font.SysFont('arial', d['procent_size'])
             for i in range(11):
-                t = f.render(str(i * 10), 1, (0, 0, 0))
+                t = f.render(str((10 - i) * 10), 1, (0, 0, 0))
                 w = t.get_width()
                 h = t.get_height()
                 x = size / 2 + a * (-i + 5) / 10 - w / 2
                 y = size / 2 + med / 3 + h / 10
                 sc.blit(t, (x, y))
             for i in range(11):
-                t = f.render(str(i * 10), 1, (0, 0, 0))
+                t = f.render(str((10 - i) * 10), 1, (0, 0, 0))
                 w = t.get_width()
                 h = t.get_height()
                 s = pygame.Surface((w, h))
@@ -442,7 +426,7 @@ class PyGame:
                 y -= (1 / 2 * h + (3 ** 0.5 / 2) * w) / 2
                 sc.blit(s, (x, y))
             for i in range(11):
-                t = f.render(str((10 - i) * 10), 1, (0, 0, 0))
+                t = f.render(str((i) * 10), 1, (0, 0, 0))
                 w = t.get_width()
                 h = t.get_height()
                 s = pygame.Surface((w, h))
@@ -494,15 +478,27 @@ class PyGame:
             c1 = 0
             if point[2] == '':
                 c1 = 100 - b1 - a1
+                if c1 < 0:
+                    continue
             else:
                 try:
                     c1 = float(point[2])
                 except:
                     continue
+                if a1 + b1 + c1 == 0:
+                    continue
                 a1, b1, c1 = a1 * 100 / (a1 + b1 + c1), b1 * 100 / (a1 + b1 + c1), c1 * 100 / (a1 + b1 + c1)
             # координаты точки
-            k1 = b1 / a1
-            k2 = b1 / c1
+            #k1 = b1 / a1
+            #k2 = b1 / c1
+            if b1 == 0:
+                b1 = 0.001
+            if a1 == 0:
+                a1 = 0.001
+            if c1 == 0:
+                c1 = 0.001
+            k1 = c1 / b1
+            k2 = c1 / a1
             ang1 = get_angle(k1)
             ang2 = get_angle(k2)
             t2 = math.tan(ang1 / 180 * math.pi)

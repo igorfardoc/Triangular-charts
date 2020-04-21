@@ -90,9 +90,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>580</x>
      <y>540</y>
-     <width>61</width>
+     <width>121</width>
      <height>31</height>
     </rect>
    </property>
@@ -102,7 +102,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Ось 1</string>
+    <string>Вершина 1</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="axe1">
@@ -123,9 +123,9 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>580</x>
      <y>590</y>
-     <width>61</width>
+     <width>121</width>
      <height>31</height>
     </rect>
    </property>
@@ -135,7 +135,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Ось 2</string>
+    <string>Вершина 2</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="axe2">
@@ -156,9 +156,9 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>640</x>
+     <x>580</x>
      <y>640</y>
-     <width>61</width>
+     <width>121</width>
      <height>31</height>
     </rect>
    </property>
@@ -168,7 +168,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Ось 3</string>
+    <string>Вершина 3</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="axe3">
