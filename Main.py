@@ -47,6 +47,17 @@ class EditData(QWidget):
         self.edit = True
         self.initUI()
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            r = self.tablew.currentRow()
+            c = self.tablew.currentColumn()
+            if c < 5:
+                self.table[r][c] = ''
+                self.print_table()
+        if int(event.modifiers()) == (Qt.ControlModifier):
+            if event.key() == Qt.Key_V:
+                self.paste()
+
     def initUI(self):
         uic.loadUi('Main.ui', self)
         self.screen = pygame.display.set_mode((self.size_pygame, self.size_pygame))
@@ -206,12 +217,16 @@ class EditData(QWidget):
             for j in range(len(data[i])):
                 if j + c >= 5:
                     continue
-                self.table[i + r][j + c] = data[i][j]
+                if j + c > 0 or j + c < 4:
+                    self.table[i + r][j + c] = data[i][j].replace(',', '.')
+                else:
+                    self.table[i + r][j + c] = data[i][j]
         if self.table[len(self.table) - 1][:5] != ['', '', '', '', '']:
             self.table.append(['', '', '', '', '', 0, True])
         self.update_table1()
         self.draw_table1()
         self.print_table()
+        self.draw_py_game()
 
     def nothing(self):
         pass
