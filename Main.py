@@ -39,11 +39,16 @@ class EditData(QWidget):
         self.icon_size = 10
         self.axes_size = 40
         self.procents_size = 10
-        self.picture_size = 200
+        self.picture_size = 10 / 2.54 * 200
         self.table1 = []
-        self.metkas = [('Красный квадрат', 'red_square.jpg'), ('Чёрный ромб', 'black_romb.jpg'),
-                       ('Синий треугольник', 'blue_triangle.jpg'),
-                       ('Красный круг', 'red_circle.jpg'), ('Чёрный треугольник', 'black_triangle.jpg')]
+        self.metkas = [('Красный треугольник', 'red_triangle.jpg'), ('Чёрный треугольник', 'black_triangle.jpg'),
+                       ('Синий треугольник', 'blue_triangle.jpg'), ('Красный квадрат', 'red_square.jpg'),
+                       ('Чёрный квадрат', 'black_square.jpg'), ('Синий квадрат', 'blue_square.jpg'),
+                       ('Красный круг', 'red_circle.jpg'), ('Чёрный круг', 'black_circle.jpg'),
+                       ('Синий круг', 'blue_circle.jpg')]
+        self.icons = []
+        for i, j in self.metkas:
+            self.icons.append(QIcon(QPixmap(j)))
         self.edit = True
         self.initUI()
 
@@ -57,6 +62,28 @@ class EditData(QWidget):
         if int(event.modifiers()) == (Qt.ControlModifier):
             if event.key() == Qt.Key_V:
                 self.paste()
+        if int(event.modifiers()) == (Qt.ControlModifier):
+            if event.key() == Qt.Key_C:
+                self.copy_text()
+
+    def copy_text(self):
+        text = ''
+        ranges = self.tablew.selectedRanges()
+        if len(ranges) != 0:
+            range1 = ranges[0]
+            for i in range(range1.topRow(), range1.bottomRow() + 1):
+                for j in range(range1.leftColumn(), range1.rightColumn() + 1):
+                    dat = self.table[i][j]
+                    if j in [1, 2, 3]:
+                        dat = dat.replace('.', ',')
+                    if j == range1.rightColumn():
+                        text += dat + '\r\n'
+                    else:
+                        text += dat + '\t'
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardText(text)
+        win32clipboard.CloseClipboard()
 
     def initUI(self):
         uic.loadUi('Main.ui', self)
@@ -64,6 +91,7 @@ class EditData(QWidget):
         self.draw_py_game()
 
         self.pasteButton.clicked.connect(self.paste)
+        self.copyButton.clicked.connect(self.copy_text)
         self.tablew.setColumnCount(7)
         self.tablew.setHorizontalHeaderLabels(['№ образца', 'A', 'B', 'C', 'Имя группы', 'Маркер', 'Отображать'])
         self.tablew.setRowCount(1)
@@ -113,7 +141,7 @@ class EditData(QWidget):
             self.procents_size = int(mass[7])
             self.procent_size.setValue(self.procents_size)
             self.picture_size = int(mass[8])
-            self.spin_size.setValue(self.picture_size)
+            self.spin_size.setValue(self.picture_size / 200 * 2.54)
             self.table = []
             for i in range(9, len(mass)):
                 mass1 = mass[i].split('~')
@@ -198,7 +226,7 @@ class EditData(QWidget):
         self.procents_size = self.procent_size.value()
         self.axes_size = self.axe_size.value()
         self.icon_size = self.marker_size.value()
-        self.picture_size = self.spin_size.value()
+        self.picture_size = self.spin_size.value() / 2.54 * 200
         self.draw_py_game()
 
     def paste(self):
@@ -234,7 +262,13 @@ class EditData(QWidget):
     def change_data_table(self, r, c):
         if not self.edit:
             return
-        self.table[r][c] = self.tablew.item(r, c).text()
+        if c in [1, 2, 3]:
+            self.table[r][c] = self.tablew.item(r, c).text().replace(',', '.')
+            self.edit = False
+            self.tablew.setItem(r, c, QTableWidgetItem(self.table[r][c]))
+            self.edit = True
+        else:
+            self.table[r][c] = self.tablew.item(r, c).text()
         if self.table[len(self.table) - 1][:5] != ['', '', '', '', '']:
             self.table.append(['', '', '', '', '', 0, True])
             self.print_table()
@@ -271,9 +305,9 @@ class EditData(QWidget):
             self.tablew1.setItem(i, 0, a)
 
             self.tablew1.setCellWidget(i, 1, QComboBox())
-            for k, l in self.metkas[::-1]:
-                self.tablew1.cellWidget(i, 1).insertItem(0, k)
-                self.tablew1.cellWidget(i, 1).setItemIcon(0, QIcon(QPixmap(l)))
+            for k in range(len(self.metkas) - 1, -1, -1):
+                self.tablew1.cellWidget(i, 1).insertItem(0, self.metkas[k][0])
+                self.tablew1.cellWidget(i, 1).setItemIcon(0, self.icons[k])
             self.tablew1.cellWidget(i, 1).setCurrentIndex(self.table1[i][1])
             self.tablew1.cellWidget(i, 1).currentIndexChanged.connect(self.table1_combo_change)
 
@@ -344,9 +378,9 @@ class EditData(QWidget):
                 self.tablew.setItem(i, j, QTableWidgetItem(self.table[i][j]))
             if bef <= i or start:
                 self.tablew.setCellWidget(i, 5, QComboBox())
-                for k, l in self.metkas[::-1]:
-                    self.tablew.cellWidget(i, 5).insertItem(0, k)
-                    self.tablew.cellWidget(i, 5).setItemIcon(0, QIcon(QPixmap(l)))
+                for k in range(len(self.metkas) - 1, -1, -1):
+                    self.tablew.cellWidget(i, 5).insertItem(0, self.metkas[k][0])
+                    self.tablew.cellWidget(i, 5).setItemIcon(0, self.icons[k])
             self.tablew.cellWidget(i, 5).setCurrentIndex(self.table[i][5])
             if bef <= i or start:
                 self.tablew.cellWidget(i, 5).currentIndexChanged.connect(self.combo_change)
@@ -377,7 +411,18 @@ class EditData(QWidget):
         global d, size
         d = d1
         size = self.size_pygame
-        self.screen.blit(self.painter.get_surface(), (0, 0))
+        src = self.painter.get_surface()
+        a = size / 4 * 3
+        pygame.draw.line(src, (170, 170, 170), (size / 2 - a / 2, size / 10 * 9),
+                         (size / 2 + a / 2, size / 10 * 9))
+        pygame.draw.line(src, (170, 170, 170), (size / 2 - a / 2, size / 10 * 8.9),
+                         (size / 2 - a / 2, size / 10 * 9.1))
+        pygame.draw.line(src, (170, 170, 170), (size / 2 + a / 2, size / 10 * 8.9),
+                         (size / 2 + a / 2, size / 10 * 9.1))
+        f = pygame.font.SysFont('arial', 20)
+        t1 = f.render(str(round(self.picture_size / size * a / 200 * 2.54, 2)) + ' см.', 1, (170, 170, 170))
+        src.blit(t1, (size / 2 - t1.get_width() / 2, size / 10 * 9 - 25))
+        self.screen.blit(src, (0, 0))
         pygame.display.flip()
 
 
