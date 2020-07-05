@@ -31,7 +31,7 @@ class EditData(QWidget):
         self.size_pygame = 600
         self.painter = PyGame()
         self.table = []
-        for i in range(5000):
+        for i in range(100):
             self.table.append(['', '', '', '', '', 0, True])
         self.axes = ['', '', '']
         self.net_visible = False
@@ -140,7 +140,7 @@ class EditData(QWidget):
             self.axe_size.setValue(self.axes_size)
             self.procents_size = int(mass[7])
             self.procent_size.setValue(self.procents_size)
-            self.picture_size = int(mass[8])
+            self.picture_size = float(mass[8])
             self.spin_size.setValue(self.picture_size / 200 * 2.54)
             self.table = []
             for i in range(9, len(mass)):
@@ -443,12 +443,12 @@ class PyGame:
         #############################
         fs = d['side_size']
         f = pygame.font.SysFont('arial', fs)
-        t1 = f.render(d['sides'][0], 1, (0, 0, 0))
+        t1 = f.render(d['sides'][1], 1, (0, 0, 0))
         x = min(size / 2 + a / 2 - t1.get_width() / 2, size - t1.get_width() - 10)
         y = size / 2 + med / 3 + t1.get_height() / 3
         sc.blit(t1, (round(x), round(y)))
         #
-        t2 = f.render(d['sides'][1], 1, (0, 0, 0))
+        t2 = f.render(d['sides'][0], 1, (0, 0, 0))
         x = max(size / 2 - a / 2 - t2.get_width() / 2, 10)
         y = size / 2 + med / 3 + t2.get_height() / 3
         sc.blit(t2, (round(x), round(y)))
@@ -556,10 +556,10 @@ class PyGame:
             if a1 == 0:
                 a1 = 0.001
             y = size / 2 + med / 3
-            x = size / 2 - a / 2 + a / 100 * a1
+            x = size / 2 - a / 2 + a / 100 * b1
             if c1 != 0:
-                k1 = c1 / b1
-                k2 = c1 / a1
+                k1 = c1 / a1
+                k2 = c1 / b1
                 ang1 = get_angle(k1)
                 ang2 = get_angle(k2)
                 t2 = math.tan(ang1 / 180 * math.pi)
