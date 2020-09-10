@@ -111,6 +111,7 @@ class EditData(QWidget):
         self.save_file.clicked.connect(self.save_file1)
 
         self.save_picture.clicked.connect(self.save)
+        self.save_legend.clicked.connect(self.save_legend1)
 
         self.tablew1.setColumnCount(3)
         self.tablew1.setHorizontalHeaderLabels(['Имя группы', 'Маркер', 'Отображать'])
@@ -174,6 +175,14 @@ class EditData(QWidget):
                 mass.append('~'.join(a))
             open(name, 'w').write('\n'.join(mass))
 
+
+    def save_legend1(self):
+        name = QFileDialog.getSaveFileName(self, 'Сохранение легенды', filter='.png file (*.png)',
+                                           directory='picture.png')
+        if name[0]:
+            surface = self.painter.get_legend(self.table1, self.metkas)
+            pygame.image.save(surface, name[0])
+
     def save_file1(self):
         if not self.file:
             self.save_as()
@@ -192,7 +201,7 @@ class EditData(QWidget):
         open(name, 'w').write('\n'.join(mass))
 
     def save(self):
-        name = QFileDialog.getSaveFileName(self, 'Сохранение', filter='.png file (*.png)',
+        name = QFileDialog.getSaveFileName(self, 'Сохранение диаграммы', filter='.png file (*.png)',
                                            directory='picture.png')
         if name[0]:
             koef = self.picture_size / self.size_pygame
@@ -433,6 +442,70 @@ size = 0
 class PyGame:
     def __init__(self):
         pass
+
+
+    def get_legend(self, table, metkas):
+        sizei = 60
+        height = 100
+        width = 1000
+        sizes = 50
+        f = pygame.font.SysFont('arial', sizes)
+        total = 0
+        scs = []
+        for i in range(len(table)):
+            el = table[i]
+            str1 = '- ' + el[0]
+            fig = metkas[el[1]][0].lower()
+            icon = pygame.Surface((sizei, sizei))
+            icon.fill((255, 255, 255))
+            col = (0, 0, 0)
+            if 'красный' in fig:
+                col = (255, 0, 0)
+            elif 'чёрный' in fig:
+                col = (0, 0, 0)
+            elif 'зелёный' in fig:
+                col = (0, 255, 0)
+            elif 'синий' in fig:
+                col = (0, 0, 255)
+            if 'квадрат' in fig:
+                pygame.draw.polygon(icon, col, [(0, 0), (0, sizei), (sizei, sizei), (sizei, 0)])
+            elif 'ромб' in fig:
+                pygame.draw.polygon(icon, col, [(0, sizei / 2), (sizei / 2, sizei), (sizei, sizei / 2), (sizei / 2, 0)])
+            elif 'круг' in fig:
+                pygame.draw.circle(icon, col, (int(sizei / 2), int(sizei / 2)), int(sizei / 2))
+            elif 'треугольник' in fig:
+                pygame.draw.polygon(icon, col, [(0, sizei), (sizei, sizei), (sizei / 2, 0)])
+            mass = []
+            mass1 = str1.split(' ')
+            now = ''
+            for j in range(len(mass1)):
+                now1 = now
+                now += ' ' + mass1[j]
+                t = f.render(now, 1, (0, 0, 0))
+                if t.get_width() > width - 2 * sizei - 10:
+                    mass.append(now1)
+                    now = mass1[j]
+            if now != '':
+                mass.append(now)
+            total += len(mass)
+            sc = pygame.Surface((width, height * len(mass)))
+            sc.fill((255, 255, 255))
+            sc.blit(icon, (sizei / 2, (height - sizei) / 2))
+            for j in range(len(mass)):
+                t = f.render(mass[j], 1, (0, 0, 0))
+                if j == 0:
+                    sc.blit(t, (2 * sizei, (height - t.get_height()) / 2))
+                else:
+                    sc.blit(t, (sizei / 2, j * height + (height - t.get_height()) / 2))
+            scs.append(sc)
+        sc = pygame.Surface((width, height * total))
+        sc.fill((255, 255, 255))
+        now = 0
+        for j in range(len(scs)):
+            sc.blit(scs[j], (0, now))
+            now += scs[j].get_height()
+        return sc
+
 
     def get_surface(self):
         global d, size

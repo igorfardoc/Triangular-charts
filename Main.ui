@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1087</width>
-    <height>941</height>
+    <height>960</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -365,9 +365,9 @@
   <widget class="QPushButton" name="save_picture">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>890</y>
-     <width>261</width>
+     <x>830</x>
+     <y>900</y>
+     <width>231</width>
      <height>41</height>
     </rect>
    </property>
@@ -450,6 +450,24 @@
    </property>
    <property name="text">
     <string>Копировать</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="save_legend">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>900</y>
+     <width>231</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Сохранить легенду</string>
    </property>
   </widget>
  </widget>

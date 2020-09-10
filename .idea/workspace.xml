@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="25ba7960-e8d8-4d45-a19a-ffb6ab3b6cf7" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +22,49 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Futures (1)">
+    <configuration name="Futures (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Triangular-charts" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\igorm\AppData\Local\Programs\Python\Python37-32\python.exe" />
+      <option name="WORKING_DIRECTORY" value="D:/Programming/Futures_one" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="D:/Programming/Futures_one/Futures.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Futures" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Triangular-charts" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\igorm\AppData\Local\Programs\Python\Python37-32\python.exe" />
+      <option name="WORKING_DIRECTORY" value="D:/Programming/Futures one" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="D:/Programming/Futures one/Futures.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Triangular-charts" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -68,6 +109,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Futures (1)" />
+        <item itemvalue="Python.Futures" />
         <item itemvalue="Python.Main" />
       </list>
     </recent_temporary>
@@ -86,10 +129,6 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="424" y="4" key="CommitChangelistDialog2" timestamp="1586080151949">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="424" y="4" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1586080151949" />
     <state width="1515" height="201" key="GridCell.Tab.0.bottom" timestamp="1593954753506">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -122,13 +161,13 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1515" height="201" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1593954753506" />
-    <state x="277" y="55" key="SettingsEditor" timestamp="1593953866213">
+    <state x="277" y="55" key="SettingsEditor" timestamp="1595708187445">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="277" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1593953866213" />
-    <state x="465" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1593953857090">
+    <state x="277" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1595708187445" />
+    <state x="465" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1595709097519">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="465" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1593953857090" />
+    <state x="465" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1595709097519" />
   </component>
 </project>
