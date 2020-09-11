@@ -106,6 +106,9 @@ class EditData(QWidget):
         self.axe_size.valueChanged.connect(self.change_params)
         self.procent_size.valueChanged.connect(self.change_params)
         self.spin_size.valueChanged.connect(self.change_params)
+        self.mod1.stateChanged.connect(self.change_params)
+        self.mod2.stateChanged.connect(self.change_params)
+        self.mod3.stateChanged.connect(self.change_params)
         self.open_file.clicked.connect(self.open_file_d)
         self.save_as_file.clicked.connect(self.save_as)
         self.save_file.clicked.connect(self.save_file1)
@@ -227,11 +230,15 @@ class EditData(QWidget):
             pygame.image.save(surface, name[0])
 
     def change_params(self, val):
+        global mods
         self.axes[0] = self.axe1.text()
         self.axes[1] = self.axe2.text()
         self.axes[2] = self.axe3.text()
         self.procents_visible = self.procents.isChecked()
         self.net_visible = self.net.isChecked()
+        mods[0] = self.mod1.isChecked()
+        mods[1] = self.mod2.isChecked()
+        mods[2] = self.mod3.isChecked()
         self.procents_size = self.procent_size.value()
         self.axes_size = self.axe_size.value()
         self.icon_size = self.marker_size.value()
@@ -437,6 +444,7 @@ class EditData(QWidget):
 
 d = {}
 size = 0
+mods = [False, False, False]
 
 
 class PyGame:
@@ -508,7 +516,8 @@ class PyGame:
 
 
     def get_surface(self):
-        global d, size
+        global d, size, mods
+        sr = int(size // 500)
         sc = pygame.Surface((size, size))
         a = size / 4 * 3
         med = (a * a - a * a / 4) ** 0.5
@@ -527,7 +536,7 @@ class PyGame:
         sc.blit(t2, (round(x), round(y)))
         #
         t3 = f.render(d['sides'][2], 1, (0, 0, 0))
-        x = size / 2 + 20
+        x = size / 2 + t3.get_height() / 2
         y = size / 2 - med / 3 * 2 - t3.get_height() / 2
         sc.blit(t3, (round(x), round(y)))
         ############################
@@ -580,22 +589,37 @@ class PyGame:
         pointa = (round(size / 2 - a / 2), round(size / 2 + med / 3))
         pointb = (round(size / 2), round(size / 2 - med / 3 * 2))
         pointc = (round(size / 2 + a / 2), round(size / 2 + med / 3))
-        pygame.draw.line(sc, (0, 0, 0), pointa, pointb)
-        pygame.draw.line(sc, (0, 0, 0), pointa, pointc)
-        pygame.draw.line(sc, (0, 0, 0), pointc, pointb)
+        if sr > 1:
+            1 == 1
+        pygame.draw.line(sc, (0, 0, 0), pointa, pointb, sr)
+        pygame.draw.line(sc, (0, 0, 0), pointa, pointc, sr)
+        pygame.draw.line(sc, (0, 0, 0), pointc, pointb, sr)
         if d['net']:
             net_col = (200, 200, 200)
             for i in range(9):
                 pygame.draw.line(sc, net_col, (size / 2 - a / 2 + (1 + i) * a / 10, size / 2 + med / 3),
                                  (size / 2 + a / 2 - 1 / 2 * (9 - i) * a / 10,
-                                  size / 2 + med / 3 - (9 - i) / 10 * a * (3 ** 0.5 / 2)))
+                                  size / 2 + med / 3 - (9 - i) / 10 * a * (3 ** 0.5 / 2)), sr)
                 pygame.draw.line(sc, net_col, (size / 2 - a / 2 + (1 + i) * a / 10, size / 2 + med / 3),
                                  (size / 2 - a / 2 + 1 / 2 * (1 + i) * a / 10,
-                                  size / 2 + med / 3 - (i + 1) / 10 * a * (3 ** 0.5 / 2)))
+                                  size / 2 + med / 3 - (i + 1) / 10 * a * (3 ** 0.5 / 2)), sr)
                 pygame.draw.line(sc, net_col, (
                 size / 2 - 1 / 2 * a * (i + 1) / 10, size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10),
                                  (size / 2 + 1 / 2 * a * (i + 1) / 10,
-                                  size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10))
+                                  size / 2 - med / 3 * 2 + (3 ** 0.5 / 2) * a * (i + 1) / 10), sr)
+        if mods[0]:
+            pygame.draw.line(sc, (0, 0, 0), (size / 2, size / 2), (size / 2, size / 2 + med / 3), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2, size / 2), (size / 2 - a / 4, size / 2 - med / 6), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2, size / 2), (size / 2 + a / 4, size / 2 - med / 6), sr * 3)
+        if mods[1]:
+            pygame.draw.line(sc, (0, 0, 0), (size / 2, size / 2 - med / 3 * 2), (size / 2, size / 2 + med / 3), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2 - a / 4, size / 2 - med / 6), (size / 2 + a / 4, size / 2 - med / 6), sr * 3)
+        if mods[2]:
+            pygame.draw.line(sc, (0, 0, 0), (size / 2 - a / 4, size / 2 - med / 6), (size / 2 + a / 4, size / 2 - med / 6), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2, size / 2 - med / 6), (size / 2, size / 2 + med / 3), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2 - a / 8 * 3, size / 2 + med / 12), (size / 2 + a / 8 * 3, size / 2 + med / 12), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2 - a / 4, size / 2 + med / 3), (size / 2 - a / 8, size / 2 + med / 12), sr * 3)
+            pygame.draw.line(sc, (0, 0, 0), (size / 2 + a / 4, size / 2 + med / 3), (size / 2 + a / 8, size / 2 + med / 12), sr * 3)
         mass = d['points']
         sizei = d['sizei']
         for i in mass:
