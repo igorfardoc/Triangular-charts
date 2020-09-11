@@ -106,9 +106,10 @@ class EditData(QWidget):
         self.axe_size.valueChanged.connect(self.change_params)
         self.procent_size.valueChanged.connect(self.change_params)
         self.spin_size.valueChanged.connect(self.change_params)
-        self.mod1.stateChanged.connect(self.change_params)
-        self.mod2.stateChanged.connect(self.change_params)
-        self.mod3.stateChanged.connect(self.change_params)
+        mass = ['Нет', 'Поле 1', 'Поле 2', 'Поле 3']
+        for i in range(len(mass)):
+            self.comboMod.insertItem(i, mass[i])
+        self.comboMod.currentIndexChanged.connect(self.change_mod)
         self.open_file.clicked.connect(self.open_file_d)
         self.save_as_file.clicked.connect(self.save_as)
         self.save_file.clicked.connect(self.save_file1)
@@ -229,6 +230,12 @@ class EditData(QWidget):
             surface = self.painter.get_surface()
             pygame.image.save(surface, name[0])
 
+    def change_mod(self, state):
+        global mods
+        mods = [False, False, False]
+        mods[state - 1] = True
+        self.draw_py_game()
+
     def change_params(self, val):
         global mods
         self.axes[0] = self.axe1.text()
@@ -236,9 +243,6 @@ class EditData(QWidget):
         self.axes[2] = self.axe3.text()
         self.procents_visible = self.procents.isChecked()
         self.net_visible = self.net.isChecked()
-        mods[0] = self.mod1.isChecked()
-        mods[1] = self.mod2.isChecked()
-        mods[2] = self.mod3.isChecked()
         self.procents_size = self.procent_size.value()
         self.axes_size = self.axe_size.value()
         self.icon_size = self.marker_size.value()

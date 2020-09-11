@@ -95,8 +95,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>580</x>
-     <y>540</y>
+     <x>600</x>
+     <y>590</y>
      <width>121</width>
      <height>31</height>
     </rect>
@@ -113,8 +113,8 @@
   <widget class="QLineEdit" name="axe1">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>540</y>
+     <x>730</x>
+     <y>590</y>
      <width>301</width>
      <height>31</height>
     </rect>
@@ -128,8 +128,8 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>580</x>
-     <y>590</y>
+     <x>600</x>
+     <y>640</y>
      <width>121</width>
      <height>31</height>
     </rect>
@@ -146,8 +146,8 @@
   <widget class="QLineEdit" name="axe2">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>590</y>
+     <x>730</x>
+     <y>640</y>
      <width>301</width>
      <height>31</height>
     </rect>
@@ -161,8 +161,8 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>580</x>
-     <y>640</y>
+     <x>600</x>
+     <y>690</y>
      <width>121</width>
      <height>31</height>
     </rect>
@@ -179,8 +179,8 @@
   <widget class="QLineEdit" name="axe3">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>640</y>
+     <x>730</x>
+     <y>690</y>
      <width>301</width>
      <height>31</height>
     </rect>
@@ -194,8 +194,8 @@
   <widget class="QSpinBox" name="marker_size">
    <property name="geometry">
     <rect>
-     <x>880</x>
-     <y>690</y>
+     <x>900</x>
+     <y>740</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -218,8 +218,8 @@
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>690</y>
+     <x>660</x>
+     <y>740</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -236,8 +236,8 @@
   <widget class="QSpinBox" name="axe_size">
    <property name="geometry">
     <rect>
-     <x>880</x>
-     <y>740</y>
+     <x>900</x>
+     <y>790</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -260,8 +260,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>740</y>
+     <x>660</x>
+     <y>790</y>
      <width>221</width>
      <height>31</height>
     </rect>
@@ -278,8 +278,8 @@
   <widget class="QSpinBox" name="procent_size">
    <property name="geometry">
     <rect>
-     <x>880</x>
-     <y>790</y>
+     <x>900</x>
+     <y>840</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -302,8 +302,8 @@
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>790</y>
+     <x>660</x>
+     <y>840</y>
      <width>211</width>
      <height>31</height>
     </rect>
@@ -320,8 +320,8 @@
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
-     <x>640</x>
-     <y>840</y>
+     <x>660</x>
+     <y>890</y>
      <width>231</width>
      <height>31</height>
     </rect>
@@ -338,8 +338,8 @@
   <widget class="QSpinBox" name="spin_size">
    <property name="geometry">
     <rect>
-     <x>880</x>
-     <y>840</y>
+     <x>900</x>
+     <y>890</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -470,12 +470,12 @@
     <string>Сохранить легенду</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="mod3">
+  <widget class="QComboBox" name="comboMod">
    <property name="geometry">
     <rect>
-     <x>910</x>
-     <y>900</y>
-     <width>221</width>
+     <x>730</x>
+     <y>540</y>
+     <width>301</width>
      <height>31</height>
     </rect>
    </property>
@@ -483,17 +483,14 @@
     <font>
      <pointsize>14</pointsize>
     </font>
-   </property>
-   <property name="text">
-    <string>Поля 3</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="mod2">
+  <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>760</x>
-     <y>900</y>
-     <width>101</width>
+     <x>660</x>
+     <y>540</y>
+     <width>81</width>
      <height>31</height>
     </rect>
    </property>
@@ -503,25 +500,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Поля 2</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="mod1">
-   <property name="geometry">
-    <rect>
-     <x>600</x>
-     <y>900</y>
-     <width>101</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>Поля 1</string>
+    <string>Поля</string>
    </property>
   </widget>
  </widget>
