@@ -233,7 +233,8 @@ class EditData(QWidget):
     def change_mod(self, state):
         global mods
         mods = [False, False, False]
-        mods[state - 1] = True
+        if state != 0:
+            mods[state - 1] = True
         self.draw_py_game()
 
     def change_params(self, val):
