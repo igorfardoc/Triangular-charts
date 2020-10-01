@@ -294,6 +294,12 @@ class EditData(QWidget):
             self.table.append(['', '', '', '', '', 0, True])
             self.print_table()
         self.update_table1()
+        if c == 4:
+            for i in range(len(self.table1)):
+                if self.table1[i][0] == self.table[r][4]:
+                    self.table[r][5] = self.table1[i][1]
+                    self.print_table()
+                    break
         self.draw_table1()
         #self.print_table()
         self.tablew.resizeColumnsToContents()
@@ -671,9 +677,6 @@ class PyGame:
                 y = t1 * x
                 x += size / 2 - a / 2
                 y = size / 2 + med / 3 - y
-            #
-            icon = pygame.Surface((sizei, sizei))
-            icon.fill((255, 255, 255))
             col = (0, 0, 0)
             if 'красный' in fig:
                 col = (255, 0, 0)
@@ -683,15 +686,19 @@ class PyGame:
                 col = (0, 255, 0)
             elif 'синий' in fig:
                 col = (0, 0, 255)
+            xnow = x - sizei / 2
+            ynow = y - sizei / 2
             if 'квадрат' in fig:
-                pygame.draw.polygon(icon, col, [(0, 0), (0, sizei), (sizei, sizei), (sizei, 0)])
+                pygame.draw.polygon(sc, col, [(xnow, ynow), (xnow, ynow + sizei),
+                                                (xnow + sizei, ynow + sizei), (xnow + sizei, ynow)])
             elif 'ромб' in fig:
-                pygame.draw.polygon(icon, col, [(0, sizei / 2), (sizei / 2, sizei), (sizei, sizei / 2), (sizei / 2, 0)])
+                pygame.draw.polygon(sc, col, [(xnow, ynow + sizei / 2), (xnow + sizei / 2, ynow + sizei),
+                                                (xnow + sizei, ynow + sizei / 2), (xnow + sizei / 2, ynow)])
             elif 'круг' in fig:
-                pygame.draw.circle(icon, col, (int(sizei / 2), int(sizei / 2)), int(sizei / 2))
+                pygame.draw.circle(sc, col, (int(xnow + sizei / 2), int(ynow + sizei / 2)), int(sizei / 2))
             elif 'треугольник' in fig:
-                pygame.draw.polygon(icon, col, [(0, sizei), (sizei, sizei), (sizei / 2, 0)])
-            sc.blit(icon, (x - sizei / 2, y - sizei / 2))
+                pygame.draw.polygon(sc, col, [(xnow, ynow + sizei), (xnow + sizei, ynow + sizei),
+                                              (xnow + sizei / 2, ynow)])
         return sc
 
 
