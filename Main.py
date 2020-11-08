@@ -54,17 +54,27 @@ class EditData(QWidget):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Delete:
-            r = self.tablew.currentRow()
-            c = self.tablew.currentColumn()
-            if c < 5:
-                self.table[r][c] = ''
-                self.print_table()
+            self.delete_text()
+            self.print_table()
         if int(event.modifiers()) == (Qt.ControlModifier):
             if event.key() == Qt.Key_V:
                 self.paste()
         if int(event.modifiers()) == (Qt.ControlModifier):
             if event.key() == Qt.Key_C:
                 self.copy_text()
+        self.update_table1()
+        self.draw_table1()
+        self.print_table()
+        self.draw_py_game()
+
+    def delete_text(self):
+        ranges = self.tablew.selectedRanges()
+        if len(ranges) == 0:
+            return
+        range1 = ranges[0]
+        for i in range(range1.topRow(), range1.bottomRow() + 1):
+            for j in range(range1.leftColumn(), min(range1.rightColumn() + 1, 5)):
+                self.table[i][j] = ''
 
     def copy_text(self):
         text = ''
@@ -166,18 +176,7 @@ class EditData(QWidget):
         name, _ = QFileDialog.getSaveFileName(self, 'Сохраните файл', directory='Chart.cf', filter="Charts Files (*.cf)")
         if name:
             self.file = name
-            mass = []
-            mass.append(self.convert1(self.net_visible))
-            mass.append(self.convert1(self.procents_visible))
-            mass += self.axes
-            mass.append(str(self.icon_size))
-            mass.append(str(self.axes_size))
-            mass.append(str(self.procents_size))
-            mass.append(str(self.picture_size))
-            for i in range(len(self.table)):
-                a = self.table[i][:5] + [str(self.table[i][5]), self.convert1(self.table[i][6])]
-                mass.append('~'.join(a))
-            open(name, 'w').write('\n'.join(mass))
+            self.save_file1()
 
 
     def save_legend1(self):
@@ -202,7 +201,8 @@ class EditData(QWidget):
         mass.append(str(self.picture_size))
         for i in range(len(self.table)):
             mass.append('~'.join(self.table[i][:5] + [str(self.table[i][5]), self.convert1(self.table[i][6])]))
-        open(name, 'w').write('\n'.join(mass))
+        with open(name, 'w') as f:
+            f.write('\n'.join(mass))
 
     def save(self):
         name = QFileDialog.getSaveFileName(self, 'Сохранение диаграммы', filter='.png file (*.png)',
@@ -216,7 +216,7 @@ class EditData(QWidget):
                     now.append(['', '', ''])
                     for j in range(3):
                         try:
-                            now[0][j] = int(self.table[i][1 + j])
+                            now[0][j] = float(self.table[i][1 + j])
                         except:
                             continue
                     now.append(self.metkas[self.table[i][5]][0])
@@ -272,10 +272,6 @@ class EditData(QWidget):
                     self.table[i + r][j + c] = data[i][j]
         if self.table[len(self.table) - 1][:5] != ['', '', '', '', '']:
             self.table.append(['', '', '', '', '', 0, True])
-        self.update_table1()
-        self.draw_table1()
-        self.print_table()
-        self.draw_py_game()
 
     def nothing(self):
         pass
@@ -439,16 +435,7 @@ class EditData(QWidget):
         d = d1
         size = self.size_pygame
         src = self.painter.get_surface()
-        a = size / 4 * 3
-        pygame.draw.line(src, (170, 170, 170), (size / 2 - a / 2, size / 10 * 9),
-                         (size / 2 + a / 2, size / 10 * 9))
-        pygame.draw.line(src, (170, 170, 170), (size / 2 - a / 2, size / 10 * 8.9),
-                         (size / 2 - a / 2, size / 10 * 9.1))
-        pygame.draw.line(src, (170, 170, 170), (size / 2 + a / 2, size / 10 * 8.9),
-                         (size / 2 + a / 2, size / 10 * 9.1))
-        f = pygame.font.SysFont('arial', 20)
-        t1 = f.render(str(round(self.picture_size / size * a / 200 * 2.54, 2)) + ' см.', 1, (170, 170, 170))
-        src.blit(t1, (size / 2 - t1.get_width() / 2, size / 10 * 9 - 25))
+        src = self.painter.draw_mash(src, self.picture_size)
         self.screen.blit(src, (0, 0))
         pygame.display.flip()
 
@@ -461,6 +448,21 @@ mods = [False, False, False]
 class PyGame:
     def __init__(self):
         pass
+
+
+    def draw_mash(self, src, picture_size):
+        global d, size
+        a = size / 4 * 3
+        pygame.draw.line(src, (170, 170, 170), (size / 2 - a / 2, size / 10 * 9),
+                         (size / 2 + a / 2, size / 10 * 9))
+        pygame.draw.line(src, (170, 170, 170), (size / 2 - a / 2, size / 10 * 8.9),
+                         (size / 2 - a / 2, size / 10 * 9.1))
+        pygame.draw.line(src, (170, 170, 170), (size / 2 + a / 2, size / 10 * 8.9),
+                         (size / 2 + a / 2, size / 10 * 9.1))
+        f = pygame.font.SysFont('arial', 20)
+        t1 = f.render(str(round(picture_size / size * a / 200 * 2.54, 2)) + ' см.', 1, (170, 170, 170))
+        src.blit(t1, (size / 2 - t1.get_width() / 2, size / 10 * 9 - 25))
+        return src
 
 
     def get_legend(self, table, metkas):
@@ -636,8 +638,6 @@ class PyGame:
         for i in mass:
             point = i[0]
             fig = i[1].lower()
-            if point[0] == '':
-                continue
             try:
                 a1 = float(point[0])
                 b1 = float(point[1])
@@ -656,27 +656,10 @@ class PyGame:
                 if a1 + b1 + c1 == 0:
                     continue
                 a1, b1, c1 = a1 * 100 / (a1 + b1 + c1), b1 * 100 / (a1 + b1 + c1), c1 * 100 / (a1 + b1 + c1)
-            # координаты точки
-            #k1 = b1 / a1
-            #k2 = b1 / c1
-            if b1 == 0:
-                b1 = 0.001
-            if a1 == 0:
-                a1 = 0.001
-            y = size / 2 + med / 3
-            x = size / 2 - a / 2 + a / 100 * b1
-            if c1 != 0:
-                k1 = c1 / a1
-                k2 = c1 / b1
-                ang1 = get_angle(k1)
-                ang2 = get_angle(k2)
-                t2 = math.tan(ang1 / 180 * math.pi)
-                t1 = math.tan(ang2 / 180 * math.pi)
-                # t1*x=(a - x) * t2
-                x = (a * t2) / (t1 + t2)
-                y = t1 * x
-                x += size / 2 - a / 2
-                y = size / 2 + med / 3 - y
+            if a1 < 0 or c1 < 0 or b1 < 0:
+                continue
+            y = size / 2 + med / 3 - c1 / 100 * med
+            x = (c1 / (3 ** 0.5) + b1 * 2 / (3 ** 0.5)) / 100 * med + size / 2 - a / 2
             col = (0, 0, 0)
             if 'красный' in fig:
                 col = (255, 0, 0)
